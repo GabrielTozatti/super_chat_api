@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import './routes/auth_routes.js'
+import './routes/rooms_routes.js'
 import './validator.js'
 
 router.get('/', async () => {
