@@ -87,7 +87,7 @@ export default class RoomsServices {
     const room = await Room.findOrFail(roomId)
 
     if (room.ownerId !== user.id) { return { message: 'Apenas o dono pode transferir a sala.' } }
-    if (room.ownerId === user.id) { return { message: 'Você já é o dono da sala.' } }
+    if (room.ownerId === newOwnerId) { return { message: 'Você já é o dono da sala.' } }
 
     const isMember = await room.related('users').query().where('users.id', newOwnerId).first()
     if (!isMember) { return { message: 'O novo dono precisa ser membro da sala.' } }
