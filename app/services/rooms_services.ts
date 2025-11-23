@@ -7,7 +7,7 @@ export default class RoomsServices {
 
   async findAll() {
     const rooms = await Room.query()
-      .preload('owner', (q) => q.select('id', 'name'))
+      .preload('owner', (query) => query.select('id', 'name'))
       .withCount('users')
       .orderBy('created_at', 'desc')
 

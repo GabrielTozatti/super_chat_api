@@ -33,6 +33,8 @@ export default class HttpExceptionHandler extends ExceptionHandler {
       return response.unauthorized({ message: 'Acesso não autorizado.' })
     }
 
+    console.log(error)
+
     return response.internalServerError({ message: 'Ocorreu um erro inesperado' })
   }
 

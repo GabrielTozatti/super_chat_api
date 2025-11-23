@@ -35,4 +35,13 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @manyToMany(() => Room, { pivotTable: 'rooms_users', pivotTimestamps: true, })
   declare rooms: ManyToMany<typeof Room>
+
+  async checkMember(roomId: number): Promise<boolean> {
+    const room = await this.related('rooms' as any)
+      .query()
+      .where('rooms.id', roomId)
+      .first()
+      
+    return !!room
+  }
 }
