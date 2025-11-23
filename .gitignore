@@ -2,8 +2,11 @@
 node_modules
 build
 tmp
+
+# Uploads (ignora conteúdo, mas mantém a pasta e o .gitkeep)
 public/uploads/*
 !public/uploads/
+!public/uploads/.gitkeep
 
 # Secrets
 .env
