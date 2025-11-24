@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import server from "@adonisjs/core/services/server";
 import { createAdapter } from '@socket.io/redis-adapter'
 import { createClient } from 'redis'
+import env from '#start/env'
 
 class WsService {
   io: Server | undefined
@@ -9,8 +10,6 @@ class WsService {
 
   public async boot() {
     if (this.booted) return
-
-    await server.boot()
 
     const redisUrl = `redis://:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`;
     const pubClient = createClient({url: redisUrl}); 
@@ -23,7 +22,7 @@ class WsService {
 
     this.io = new Server(server.getNodeServer(), {
       cors:{
-        origin: '*',
+        origin: [env.get('FRONTEND_URL')],
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
       },
       adapter: createAdapter(pubClient, subClient)
