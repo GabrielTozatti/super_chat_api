@@ -43,6 +43,6 @@ export default class AuthServices {
     const token = await User.accessTokens.create(user, ['*'], { name: tokenName, expiresIn: '30 days' })
     const tokenValue = token.value!.release();
 
-    return { user: user.serialize(), tokenValue, message: 'Token atualizado com sucesso' }
+    return { user: user.serialize(), token: tokenValue, message: 'Token atualizado com sucesso' }
   }
 }
