@@ -31,8 +31,6 @@ export default class AuthServices {
   async refreshToken(auth: any, userAgent: string | '') {
     const user = auth.use('api').user
      
-    await auth.use('api').invalidateToken()
-
     let tokenName = 'web'
 
     if (/mobile|android|iphone|ipad/i.test(userAgent)) {tokenName = 'mobile'

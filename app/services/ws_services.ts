@@ -1,8 +1,10 @@
 import { Server } from "socket.io";
 import server from "@adonisjs/core/services/server";
-import { createAdapter } from '@socket.io/redis-adapter'
-import { createClient } from 'redis'
-import env from '#start/env'
+import { createAdapter } from '@socket.io/redis-adapter';
+import { createClient } from 'redis';
+import User from '#models/user';
+import env from '#start/env';
+import { Secret } from "@adonisjs/core/helpers";
 
 class WsService {
   io: Server | undefined
@@ -11,7 +13,7 @@ class WsService {
   public async boot() {
     if (this.booted) return
 
-    const redisUrl = `redis://:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`;
+    const redisUrl = `redis://:${env.get('REDIS_PASSWORD')}@${env.get('REDIS_HOST')}:${env.get('REDIS_PORT')}`;
     const pubClient = createClient({url: redisUrl}); 
     const subClient = pubClient.duplicate();
 
@@ -27,6 +29,23 @@ class WsService {
       },
       adapter: createAdapter(pubClient, subClient)
     }) 
+
+    this.io.use(async (socket, next) => {
+      try {
+        const token = socket.handshake.auth?.token || socket.handshake.headers['authorization']?.replace('Bearer ', '')
+         
+        if (!token) return next(new Error('No token provided')) 
+
+        const secret = new Secret(token)
+
+        const accessToken  = await User.accessTokens.verify(secret) 
+        const user = await User.find(accessToken?.tokenableId);
+
+        socket.data.user = user
+        next()
+      } catch (error) { console.error("Erro ao verificar token:", error)
+        next(new Error('Invalid token')) }
+    })
 
     this.io.on('connection', (socket) => {
       socket.on('join_room', (roomId) => {
