@@ -21,11 +21,16 @@ export default class RoomsController {
   }
 
   async store({ request, auth, response }: HttpContext) {
-    const user = auth.getUserOrFail()
-    const payload = await request.validateUsing(RoomValidator)
-  
-    const room = await this.roomsService.create(payload, user)
-    return response.created(room)
+    try {
+      const user = auth.getUserOrFail()
+      const payload = await request.validateUsing(RoomValidator)
+    
+      const room = await this.roomsService.create(payload, user)
+
+      return response.created(room)
+    } catch(error) {
+      return response.badRequest({ message: error.message || 400 })
+    }
   }
 
   async join({ params, auth, response }: HttpContext) {

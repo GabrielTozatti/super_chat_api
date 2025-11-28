@@ -1,6 +1,7 @@
 import Room from "#models/room";
 import User from "#models/user";
 import Ws from '#services/ws_services'
+import { Exception } from '@adonisjs/core/exceptions'
 
 
 export default class RoomsServices {
@@ -25,7 +26,7 @@ export default class RoomsServices {
   async create(data: { name: string; description?: string }, user: User) {
     const roomExists = await Room.findBy('name', data.name)
 
-    if (roomExists) return { message: 'Já existe uma sala com este nome'}
+    if (roomExists) throw new Exception('Já existe uma sala com este nome', { status: 400 })
 
     const room = await Room.create({...data, ownerId: user.id});
     await user.related('rooms').attach([room.id])
