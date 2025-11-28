@@ -23,6 +23,10 @@ export default class RoomsServices {
   }
 
   async create(data: { name: string; description?: string }, user: User) {
+    const roomExists = await Room.findBy('name', data.name)
+
+    if (roomExists) return { message: 'Já existe uma sala com este nome'}
+
     const room = await Room.create({...data, ownerId: user.id});
     await user.related('rooms').attach([room.id])
 
