@@ -15,12 +15,24 @@ export default class RoomsServices {
     return rooms;
   }
 
+  async findAvailable(userId: number) {
+    const rooms = await Room.query()
+      .whereDoesntHave('users', (query) => {
+        query.where('users.id', userId)
+      })
+      .preload('owner', (query) => query.select('id', 'name'))
+      .withCount('users')
+      .orderBy('created_at', 'desc')
+
+    return rooms
+  }
+
   async findMyRooms(user: User) {
     const rooms = await user.related('rooms')
       .query()
       .orderBy('created_at', 'desc')
-      
-    return rooms;  
+
+    return rooms;
   }
 
   async create(data: { name: string; description?: string }, user: User) {
@@ -28,7 +40,7 @@ export default class RoomsServices {
 
     if (roomExists) throw new Exception('Já existe uma sala com este nome', { status: 400 })
 
-    const room = await Room.create({...data, ownerId: user.id});
+    const room = await Room.create({ ...data, ownerId: user.id });
     await user.related('rooms').attach([room.id])
 
     Ws.io?.emit('rooms:created', room)
@@ -37,7 +49,7 @@ export default class RoomsServices {
 
   async join(roomId: number, user: User) {
     const room = await Room.findOrFail(roomId)
-    
+
     try {
       await user.related('rooms').attach([room.id])
 
@@ -51,14 +63,14 @@ export default class RoomsServices {
       })
 
     } catch (error) {
-      return {message: 'Você já está nesta sala'}
+      return { message: 'Você já está nesta sala' }
     }
 
     return { message: 'Bem-vindo à sala!', room }
   }
 
   async leave(roomId: number, user: User) {
-    const isInRoom = await user .related('rooms') .query() .where('room_id', roomId) .first()
+    const isInRoom = await user.related('rooms').query().where('room_id', roomId).first()
 
     if (!isInRoom) { return { message: 'Você não faz parte desta sala.' } }
 
@@ -66,9 +78,9 @@ export default class RoomsServices {
     if (room.ownerId === user.id) { return { message: 'O dono não pode sair da sala. Transfira a posse para outro membro ou exclua a sala.' } }
 
     Ws.io?.to(`room_${roomId}`).emit('user_left', {
-       userId: user.id, 
-       message: `${user.name} saiu da sala.` 
-      }
+      userId: user.id,
+      message: `${user.name} saiu da sala.`
+    }
     )
 
     await user.related('rooms').detach([roomId])
@@ -82,8 +94,8 @@ export default class RoomsServices {
     if (room.ownerId !== user.id) { return { message: 'Apenas o dono pode excluir a sala.' } }
 
     Ws.io?.to(`room_${room.id}`).emit('room_deleted', {
-       id: room.id 
-      })
+      id: room.id
+    })
 
     await room.delete()
     return { message: 'Sala excluída.' }

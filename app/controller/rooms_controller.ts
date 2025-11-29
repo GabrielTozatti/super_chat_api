@@ -8,8 +8,9 @@ import RoomsServices from '#services/rooms_services'
 export default class RoomsController {
   constructor(private roomsService: RoomsServices) { }
 
-  async index({ response }: HttpContext) {
-    const rooms = await this.roomsService.findAll()
+  async index({ auth, response }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const rooms = await this.roomsService.findAvailable(user.id)
     return response.ok(rooms)
   }
 
