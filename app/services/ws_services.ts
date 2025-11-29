@@ -50,12 +50,21 @@ class WsService {
     })
 
     this.io.on('connection', (socket) => {
-      socket.on('join_room', (roomId) => {
+      socket.on('join_room', (roomId: number) => {
         socket.join(`room_${roomId}`)
       })
 
-      socket.on('leave_room', (roomId) => {
+      socket.on('leave_room', (roomId: number) => {
         socket.leave(`room_${roomId}`)
+      })
+
+      socket.on('rejoin_rooms', (roomIds: number[]) => {
+        roomIds.forEach(roomId => {
+          const roomName = `room_${roomId}`
+          if (!socket.rooms.has(roomName)) {
+            socket.join(roomName)
+          }
+        })
       })
     })
 
