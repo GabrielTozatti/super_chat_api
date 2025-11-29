@@ -41,7 +41,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
       .query()
       .where('rooms.id', roomId)
       .first()
-      
+
     return !!room
   }
 }

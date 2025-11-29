@@ -30,7 +30,7 @@ export default class Room extends BaseModel {
   @belongsTo(() => User, { foreignKey: 'ownerId' })
   declare owner: BelongsTo<typeof User>
 
-  @manyToMany(() => User, { pivotTable: 'rooms_users', pivotTimestamps: true})
+  @manyToMany(() => User, { pivotTable: 'rooms_users', pivotTimestamps: true })
   declare users: ManyToMany<typeof User>
 
   @hasMany(() => Message)
@@ -43,6 +43,6 @@ export default class Room extends BaseModel {
         lower: true,
         strict: true,
       })
-    } 
+    }
   }
 }

@@ -6,8 +6,8 @@ import RoomsServices from '#services/rooms_services'
 
 @inject()
 export default class RoomsController {
-  constructor(private roomsService: RoomsServices) {}
-  
+  constructor(private roomsService: RoomsServices) { }
+
   async index({ response }: HttpContext) {
     const rooms = await this.roomsService.findAll()
     return response.ok(rooms)
@@ -24,11 +24,11 @@ export default class RoomsController {
     try {
       const user = auth.getUserOrFail()
       const payload = await request.validateUsing(RoomValidator)
-    
+
       const room = await this.roomsService.create(payload, user)
 
       return response.created(room)
-    } catch(error) {
+    } catch (error) {
       return response.badRequest({ message: error.message || 400 })
     }
   }
@@ -36,8 +36,8 @@ export default class RoomsController {
   async join({ params, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
     const roomId = params.id
-    
-    const room = await this.roomsService.join(roomId, user) 
+
+    const room = await this.roomsService.join(roomId, user)
 
     return response.ok(room)
   }
@@ -45,13 +45,13 @@ export default class RoomsController {
   async leave({ params, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
     const roomId = params.id
-    
-    const room = await this.roomsService.leave(roomId, user) 
+
+    const room = await this.roomsService.leave(roomId, user)
 
     return response.ok(room)
   }
 
-  async destroy({params, auth, response}: HttpContext) {
+  async destroy({ params, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
     const roomId = params.id
 
@@ -60,7 +60,7 @@ export default class RoomsController {
     return response.ok(room)
   }
 
-  async transfer({params, request, auth, response}: HttpContext) {
+  async transfer({ params, request, auth, response }: HttpContext) {
     const { newOwnerId } = await request.validateUsing(RoomOwner)
     const user = auth.getUserOrFail()
     const roomId = params.id

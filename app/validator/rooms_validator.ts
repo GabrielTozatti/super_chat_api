@@ -9,6 +9,6 @@ export const RoomValidator = vine.compile(
 
 export const RoomOwner = vine.compile(
   vine.object({
-    newOwnerId: vine.number(),  
+    newOwnerId: vine.number(),
   })
 )

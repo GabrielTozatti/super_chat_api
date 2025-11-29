@@ -31,6 +31,7 @@ export default class RoomsServices {
     const room = await Room.create({...data, ownerId: user.id});
     await user.related('rooms').attach([room.id])
 
+    Ws.io?.emit('rooms:created', room)
     return { room, message: 'Sala criada com sucesso' };
   }
 

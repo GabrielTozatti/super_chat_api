@@ -39,7 +39,7 @@ new Ignitor(APP_ROOT, { importer: IMPORTER })
 
     app.ready(async () => {
       const { default: Ws } = await import('#services/ws_services')
-      
+
       await Ws.boot()
       console.log('✅ WebSocket Service Booted')
     })

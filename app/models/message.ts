@@ -10,16 +10,16 @@ export default class Message extends BaseModel {
 
   @column()
   declare userId: number
-  
+
   @column()
   declare roomId: number
 
   @column()
   declare content: string | null
-  
+
   @column()
   declare fileUrl: string | null
-  
+
   @column()
   declare fileType: string | null
 
