@@ -133,6 +133,52 @@ O servidor estará rodando em: http://localhost:3333
 ## 🌐 Uso e Testes
 Após a execução, você pode interagir com a API utilizando o Front-end (http://localhost:5173) ou testando diretamente os endpoints via ferramentas como Insomnia ou Postman.
 
+---
 
+## 🚀 Próximos Passos e Otimizações Futuras
 
+Caso o escopo do projeto seja expandido, as seguintes melhorias e otimizações seriam priorizadas para aumentar a robustez, segurança, experiência do usuário e qualidade do código:
 
+---
+
+#### 1. Arquitetura e Segurança
+
+**Modelo de Permissão e Autorização (ACL):**
+- Implementar um sistema de Autorização e Controle de Acesso (ACL) granular para definir explicitamente o que cada perfil de usuário (Membro, Administrador da Sala, Proprietário) pode ou não fazer.
+- Restringir funcionalidades críticas (ex: banir, mutar, alterar configurações da sala) baseando-se em papéis explícitos, não apenas no `ownerId`.
+
+**Gerenciamento de Transações (Atomicidade):**
+- Refatorar operações complexas de banco de dados (ex: criação de sala, operações em massa) para utilizar transações atômicas.
+- Garantir que um conjunto de operações só seja efetivado se todas forem bem-sucedidas, prevenindo persistência de dados parciais ou inconsistentes em caso de falha.
+
+**Melhoria da Hierarquia de Grupos e Papéis:**
+- Evoluir a gestão de salas para permitir múltiplos perfis de administradores por grupo.
+- Desacoplar o papel de administração do `ownerId` (criador).
+
+---
+
+#### 2. Qualidade e Retorno da API
+
+**Padronização de Respostas da API:**
+- Implementar um padrão unificado para retornos de sucesso e falha da API.
+- Garantir uso consistente de códigos de status HTTP e mensagens de erro descritivas.
+- Exemplo: payload detalhado para erros de validação, tratamento específico para erros `401`, `403`, `404`.
+
+---
+
+#### 3. Funcionalidades do Chat e UX
+
+**Notificações em Tempo Real:**
+- Ativar sistema de notificação por eventos (baseado na estrutura pré-existente no back-end), como menções (`@nome`), reações ou mensagens não lidas.
+- Utilizar WebSockets para entregar notificações de forma assíncrona.
+
+**Recursos de Mensageria Enriquecida:**
+- Expandir o modelo de mensagens para suportar conteúdo complexo:
+  - **Markdown:** Formatação de texto.
+  - **Embeds/Previews:** Pré-visualizações ricas para links (Open Graph/oEmbed).
+  - **Mídia:** Suporte a upload e exibição de imagens ou anexos.
+- Implementar ciclo de vida completo da mensagem: edição e exclusão por parte do autor.
+
+**Responsividade e Acessibilidade do Layout (Front-end):**
+- Garantir que o layout do Front-end se ajuste perfeitamente a diferentes tamanhos de tela (desktop, tablet, mobile).
+- Otimizar a experiência do usuário em todos os dispositivos.
