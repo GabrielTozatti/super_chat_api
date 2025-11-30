@@ -13,7 +13,11 @@ class WsService {
   public async boot() {
     if (this.booted) return
 
-    const redisUrl = `redis://:${env.get('REDIS_PASSWORD')}@${env.get('REDIS_HOST')}:${env.get('REDIS_PORT')}`;
+    const password = env.get('REDIS_PASSWORD');
+    const host = env.get('REDIS_HOST');
+    const port = env.get('REDIS_PORT');
+
+    const redisUrl = password ? `redis://:${password}@${host}:${port}` : `redis://${host}:${port}`;
     const pubClient = createClient({ url: redisUrl });
     const subClient = pubClient.duplicate();
 
