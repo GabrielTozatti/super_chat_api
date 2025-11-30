@@ -83,15 +83,18 @@ Crie um arquivo `.env` na raiz do projeto, utilizando o `env.example` como base.
 | **`TZ`** | Fuso horário da aplicação. | `UTC` |
 | **`PORT`** | Porta de execução do servidor. | `3333` |
 | **`HOST`** | Host de ligação da aplicação. | `0.0.0.0` |
+| **`LOG_LEVEL`** | Nivel de log gerado. | `info` |
 | **`APP_KEY`** | Chave secreta de segurança do AdonisJS (obrigatória). | Gerada via `node ace generate:key` |
 | **`NODE_ENV`** | Ambiente de execução. | `development` |
 | **`FRONTEND_URL`** | URL do Front-end (necessário para CORS). | `http://localhost:5173` |
-| **`DB_HOST`** | Host do PostgreSQL (Nome do serviço no Docker). | `db` |
+| **`DB_HOST`** | Host do PostgreSQL | `0.0.0.0` |
 | **`DB_PORT`** | Porta interna do PostgreSQL. | `5432` |
-| **`REDIS_HOST`** | Host do Redis (Nome do serviço no Docker). | `redis` |
+| **`DB_USER`** | Usuário do PostgreSQL | `root` |
+| **`DB_PASSWORD`** | Senha do PostgreSQL | `root` |
+| **`DB_DATABASE`** | Nome dp Database | `sua_senha` |
+| **`REDIS_HOST`** | Host do Redis (Nome do serviço no Docker). | `0.0.0.0` |
 | **`REDIS_PORT`** | Porta interna do Redis. | `6379` |
-| **`REDIS_PASSWORD`** | Senha do Redis | `sua_senha` |
-| **`DB_USER/DB_PASSWORD/DB_DATABASE`** | Credenciais do PostgreSQL. | Definidas no `docker-compose.yml` |
+| **`REDIS_PASSWORD`** | Senha do Redis (opcional). | `sua_senha` |
 
 ### 3. Inicialização dos Containers (PostgreSQL e Redis)
 
@@ -135,50 +138,17 @@ Após a execução, você pode interagir com a API utilizando o Front-end (http:
 
 ---
 
-## 🚀 Próximos Passos e Otimizações Futuras
+## 🐱‍🏍 O que eu faria se tivesse mais tempo
 
-Caso o escopo do projeto seja expandido, as seguintes melhorias e otimizações seriam priorizadas para aumentar a robustez, segurança, experiência do usuário e qualidade do código:
+### Melhorias planejadas
 
----
-
-#### 1. Arquitetura e Segurança
-
-**Modelo de Permissão e Autorização (ACL):**
-- Implementar um sistema de Autorização e Controle de Acesso (ACL) granular para definir explicitamente o que cada perfil de usuário (Membro, Administrador da Sala, Proprietário) pode ou não fazer.
-- Restringir funcionalidades críticas (ex: banir, mutar, alterar configurações da sala) baseando-se em papéis explícitos, não apenas no `ownerId`.
-
-**Gerenciamento de Transações (Atomicidade):**
-- Refatorar operações complexas de banco de dados (ex: criação de sala, operações em massa) para utilizar transações atômicas.
-- Garantir que um conjunto de operações só seja efetivado se todas forem bem-sucedidas, prevenindo persistência de dados parciais ou inconsistentes em caso de falha.
-
-**Melhoria da Hierarquia de Grupos e Papéis:**
-- Evoluir a gestão de salas para permitir múltiplos perfis de administradores por grupo.
-- Desacoplar o papel de administração do `ownerId` (criador).
-
----
-
-#### 2. Qualidade e Retorno da API
-
-**Padronização de Respostas da API:**
-- Implementar um padrão unificado para retornos de sucesso e falha da API.
-- Garantir uso consistente de códigos de status HTTP e mensagens de erro descritivas.
-- Exemplo: payload detalhado para erros de validação, tratamento específico para erros `401`, `403`, `404`.
-
----
-
-#### 3. Funcionalidades do Chat e UX
-
-**Notificações em Tempo Real:**
-- Ativar sistema de notificação por eventos (baseado na estrutura pré-existente no back-end), como menções (`@nome`), reações ou mensagens não lidas.
-- Utilizar WebSockets para entregar notificações de forma assíncrona.
-
-**Recursos de Mensageria Enriquecida:**
-- Expandir o modelo de mensagens para suportar conteúdo complexo:
-  - **Markdown:** Formatação de texto.
-  - **Embeds/Previews:** Pré-visualizações ricas para links (Open Graph/oEmbed).
-  - **Mídia:** Suporte a upload e exibição de imagens ou anexos.
-- Implementar ciclo de vida completo da mensagem: edição e exclusão por parte do autor.
-
-**Responsividade e Acessibilidade do Layout (Front-end):**
-- Garantir que o layout do Front-end se ajuste perfeitamente a diferentes tamanhos de tela (desktop, tablet, mobile).
-- Otimizar a experiência do usuário em todos os dispositivos.
+- **Sistema de permissões completo**, definindo regras claras sobre o que cada usuário pode ou não fazer.
+- **Hierarquia de grupos aprimorada**, permitindo múltiplos administradores por sala (hoje ligado apenas ao criador).
+- **Padronização dos retornos da API**, tornando respostas e erros mais consistentes.
+- **Uso de transações no banco de dados** para evitar inserções indevidas caso algum passo falhe.
+- **Finalizar o sistema de notificações em tempo real** (estrutura inicial já criada).
+- **Implementar mensagens enriquecidas:**
+  - Upload de imagens
+  - Previews de links
+  - Suporte a Markdown
+  - Edição e exclusão de mensagens
