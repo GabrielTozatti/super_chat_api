@@ -93,7 +93,7 @@ export default class RoomsServices {
 
     if (room.ownerId !== user.id) { return { message: 'Apenas o dono pode excluir a sala.' } }
 
-    Ws.io?.to(`room_${room.id}`).emit('room_deleted', {
+    Ws.io?.emit('room_deleted', {
       id: room.id
     })
 
